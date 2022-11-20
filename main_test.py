@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
-from settings import Get_settings
+from settings import GetSettings
 
 
 #

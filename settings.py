@@ -1,7 +1,7 @@
 import configparser
 
 
-class Get_settings:
+class GetSettings:
     def __init__(self, settings_ini):
         settings = configparser.ConfigParser()
         settings.read(settings_ini)

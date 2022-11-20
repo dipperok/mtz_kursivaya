@@ -2,8 +2,8 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
 import os
-from settings import Get_settings
-from mtz import data_show
+from settings import GetSettings
+from mtz import ShowData
 
 
 class DlgMain(QDialog):
@@ -12,7 +12,7 @@ class DlgMain(QDialog):
         self.setWindowTitle('MTZ v1.0')
         self.resize(300, 200)
 
-        self.btn1 = QPushButton('Визуализировать', self)
+        self.btn1 = QPushButton('Визуализировать')
         self.btn1.clicked.connect(self.evt_btn_clicked1)
         self.btn1.setFixedHeight(35)
 
@@ -34,7 +34,7 @@ class DlgMain(QDialog):
         res = QFileDialog.getOpenFileName(self, 'Open File', 'C:', 'TXT File (*.txt)')
         try:
             if res[0][-4:] == '.txt':
-                data_show(res[0])
+                ShowData(res[0])
         except:
             pass
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     if not os.path.exists('temp'):
         os.mkdir('temp')
     app = QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon('1.ico'))
+    app.setWindowIcon(QtGui.QIcon('static/mgri.ico'))
     dlgMain = DlgMain()
     dlgMain.show()
     sys.exit(app.exec_())
