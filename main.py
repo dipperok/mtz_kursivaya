@@ -34,7 +34,6 @@ class DlgMain(QDialog):
         res = QFileDialog.getOpenFileName(self, 'Open File', 'C:', 'TXT File (*.txt);;XLSX File (*.xlsx)')
         try:
             if res[0][-4:] == '.txt':
-                print('res:', res[0])
                 ShowData(res[0])
         except Exception as err:
             print(err)
