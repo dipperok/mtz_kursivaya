@@ -10,7 +10,7 @@ class DlgMain(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('MTZ v1.0')
-        self.resize(300, 200)
+        self.resize(500, 350)
 
         self.btn1 = QPushButton('Визуализировать')
         self.btn1.clicked.connect(self.evt_btn_clicked1)
@@ -20,7 +20,7 @@ class DlgMain(QDialog):
         self.btn2.clicked.connect(self.evt_btn_clicked2)
         self.btn2.setFixedHeight(35)
 
-        self.btn3 = QPushButton('я гей', self)
+        self.btn3 = QPushButton('Выход', self)
         self.btn3.clicked.connect(self.evt_btn_clicked3)
         self.btn3.setFixedHeight(35)
 
@@ -31,12 +31,13 @@ class DlgMain(QDialog):
         self.setLayout(self.layout)
 
     def evt_btn_clicked1(self):
-        res = QFileDialog.getOpenFileName(self, 'Open File', 'C:', 'TXT File (*.txt)')
+        res = QFileDialog.getOpenFileName(self, 'Open File', 'C:', 'TXT File (*.txt);;XLSX File (*.xlsx)')
         try:
             if res[0][-4:] == '.txt':
+                print('res:', res[0])
                 ShowData(res[0])
-        except:
-            pass
+        except Exception as err:
+            print(err)
 
     def evt_btn_clicked2(self):
         pass
