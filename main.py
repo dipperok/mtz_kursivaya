@@ -4,7 +4,7 @@ from PyQt5 import QtGui, QtCore
 import os
 from settings import GetSettings
 from mtz import ShowData
-
+from PyQt5.QtWidgets import QMenu
 
 class DlgMain(QDialog):
     def __init__(self):
@@ -30,6 +30,7 @@ class DlgMain(QDialog):
         self.layout.addWidget(self.btn3, 2, 0, 1, 2, QtCore.Qt.AlignHCenter)
         self.setLayout(self.layout)
 
+
     def evt_btn_clicked1(self):
         res = QFileDialog.getOpenFileName(self, 'Open File', 'C:', 'TXT File (*.txt);;XLSX File (*.xlsx)')
         try:
@@ -48,6 +49,14 @@ class DlgMain(QDialog):
         else:
             self.close()
 
+    def _createMenuBar(self):
+        menuBar = self.menuBar()
+        # Creating menus using a QMenu object
+        fileMenu = QMenu("&amp;File", self)
+        menuBar.addMenu(fileMenu)
+        # Creating menus using a title
+        editMenu = menuBar.addMenu("&amp;Edit")
+        helpMenu = menuBar.addMenu("&amp;Help")
 
 if __name__ == '__main__':
     if not os.path.exists('temp'):
