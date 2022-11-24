@@ -43,7 +43,7 @@ class DlgMain(QDialog):
         pass
 
     def evt_btn_clicked3(self):
-        get_age, b_ok = QMessageBox.question(self, 'anime', 'у меня не друзей, у меня не друзей, у меня не друзей, у меня не друзей, у меня не друзей, у меня не друзей, ')
+        get_age, b_ok = QMessageBox.question(self, 'anime', '12134')
         if b_ok:
             self.close()
         else:
