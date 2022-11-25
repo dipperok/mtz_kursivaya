@@ -35,7 +35,7 @@ class DlgMain(QDialog):
 
 
     def evt_btn_clicked1(self):
-        res = QFileDialog.getOpenFileName(self, 'Open File', 'C:', 'TXT File (*.txt);;XLSX File (*.xlsx)')
+        res = QFileDialog.getOpenFileName(self, 'Open File', 'C:', 'Excel File (*.xlsx);;TXT File (*.txt)')
         try:
             if res[0][-4:] == '.txt':
                 ShowData(res[0])
