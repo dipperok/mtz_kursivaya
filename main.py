@@ -5,6 +5,8 @@ import os
 from settings import GetSettings
 from mtz import ShowData
 from PyQt5.QtWidgets import QMenu
+import webbrowser
+
 
 class DlgMain(QDialog):
     def __init__(self):
@@ -16,11 +18,11 @@ class DlgMain(QDialog):
         self.btn1.clicked.connect(self.evt_btn_clicked1)
         self.btn1.setFixedHeight(35)
 
-        self.btn2 = QPushButton('Настройки', self)
+        self.btn2 = QPushButton('Документация', self)
         self.btn2.clicked.connect(self.evt_btn_clicked2)
         self.btn2.setFixedHeight(35)
 
-        self.btn3 = QPushButton('Выход', self)
+        self.btn3 = QPushButton('Справка', self)
         self.btn3.clicked.connect(self.evt_btn_clicked3)
         self.btn3.setFixedHeight(35)
 
@@ -40,7 +42,7 @@ class DlgMain(QDialog):
             print(err)
 
     def evt_btn_clicked2(self):
-        pass
+        webbrowser.open('https://dipperok.github.io/mtz_kursivaya_documentation/')
 
     def evt_btn_clicked3(self):
         get_age, b_ok = QMessageBox.question(self, 'anime', '12134')
@@ -57,6 +59,7 @@ class DlgMain(QDialog):
         # Creating menus using a title
         editMenu = menuBar.addMenu("&amp;Edit")
         helpMenu = menuBar.addMenu("&amp;Help")
+
 
 if __name__ == '__main__':
     if not os.path.exists('temp'):
