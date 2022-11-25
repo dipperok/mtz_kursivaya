@@ -6,7 +6,8 @@ from settings import GetSettings
 from mtz import ShowData
 from PyQt5.QtWidgets import QMenu
 import webbrowser
-
+from convert_to_txt import ConvertExcelToTxt
+from pathlib import Path
 
 class DlgMain(QDialog):
     def __init__(self):
@@ -38,6 +39,13 @@ class DlgMain(QDialog):
         try:
             if res[0][-4:] == '.txt':
                 ShowData(res[0])
+            elif res[0][-5:] == '.xlsx':
+                try:
+                    file_name = Path(res[0]).stem
+                    ConvertExcelToTxt(res[0])
+                    ShowData('temp/' + str(file_name) + '.txt')
+                except:
+                    self.eror_window()
         except Exception as err:
             print(err)
 
@@ -45,20 +53,17 @@ class DlgMain(QDialog):
         webbrowser.open('https://dipperok.github.io/mtz_kursivaya_documentation/')
 
     def evt_btn_clicked3(self):
-        get_age, b_ok = QMessageBox.question(self, 'anime', '12134')
-        if b_ok:
-            self.close()
-        else:
-            self.close()
+        get_age, b_ok = QMessageBox.question(self, 'Справка', '12134')
+        try: 
+            if b_ok:
+                self.close()
+            else:
+                self.close()
+        except Exception as err:
+            print(err)
 
-    def _createMenuBar(self):
-        menuBar = self.menuBar()
-        # Creating menus using a QMenu object
-        fileMenu = QMenu("&amp;File", self)
-        menuBar.addMenu(fileMenu)
-        # Creating menus using a title
-        editMenu = menuBar.addMenu("&amp;Edit")
-        helpMenu = menuBar.addMenu("&amp;Help")
+    def eror_window(self):
+        pass
 
 
 if __name__ == '__main__':

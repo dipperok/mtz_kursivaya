@@ -10,7 +10,7 @@ class ConvertExcelToTxt:
 
         try:
             self.df = pd.read_excel(file_path)
-        except pd.errors.__all__:
+        except:
             self.status = False
             self.error_message = "Error while reading file"
 
@@ -25,7 +25,7 @@ class ConvertExcelToTxt:
                 new_file_name = file_path.split('/')[-1].split('.')[0]
 
                 t_df.to_csv(f"temp/{new_file_name}.txt", sep=" ", header=False, index=False, float_format="%.0f")
-            except pd.errors.__all__:
+            except:
                 self.status = False
                 self.error_message = "Error while saving txt file"
 
