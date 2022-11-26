@@ -5,14 +5,15 @@ import pandas as pd
 class ConvertExcelToTxt:
     def __init__(self, file_path):
         self.status = True
-        self.error_message = "No errors"
+        self.err_msg = "No errors"
+        self.output_file_path = ""
         self.df = pd.DataFrame()
 
         try:
             self.df = pd.read_excel(file_path)
         except:
             self.status = False
-            self.error_message = "Error while reading file"
+            self.err_msg = "Error while reading file, try: install openpyxl | check folder restrictions | run as admin"
 
         if self.status:
             try:
@@ -24,15 +25,17 @@ class ConvertExcelToTxt:
 
                 new_file_name = file_path.split('/')[-1].split('.')[0]
 
-                t_df.to_csv(f"temp/{new_file_name}.txt", sep=" ", header=False, index=False, float_format="%.0f")
+                self.output_file_path = f"temp/{new_file_name}.txt"
+
+                t_df.to_csv(self.output_file_path, sep=" ", header=False, index=False, float_format="%.0f")
             except:
                 self.status = False
-                self.error_message = "Error while saving txt file"
+                self.err_msg = "Error while saving txt file"
 
         if not self.status:
-            print(self.error_message)
+            print(self.err_msg)
 
 
 if __name__ == "__main__":
     test = ConvertExcelToTxt("test_data/x.xlsx")
-    print(test.error_message)
+    print(test.err_msg)
