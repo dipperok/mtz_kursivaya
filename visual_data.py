@@ -49,7 +49,7 @@ class VisualMTZ(QWidget):
     # Method to config main window
     def configure_window(self):
         self.setWindowTitle('MTZ v1.0')
-        self.resize(1920, 1080)
+        self.resize(1280, 720)
 
     # Method to configure menu_layout vars and their alignments
     def create_menu_layout(self):
