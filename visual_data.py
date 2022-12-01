@@ -1,5 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QMessageBox
@@ -30,13 +31,15 @@ class VisualMTZ(QWidget):
         self.btn1 = QPushButton("Визуализировать данные", self)
         self.btn2 = QPushButton("Визуализировать кривые rho кажущегося", self)
         self.btn3 = QPushButton("Визуализировать карту rho кажущегося", self)
-        self.btn4 = QPushButton("Визуализировать кривые phi кажущегося", self)
-        self.btn5 = QPushButton("Визуализировать карту phi кажущегося", self)
+        self.btn4 = QPushButton("Визуализировать кривые phi", self)
+        self.btn5 = QPushButton("Визуализировать карту phi", self)
 
         self.create_menu_layout()  # method to configure menu_layout dependencies
 
         # Defining graph_layout and matplotlib variables
-        self.figure, self.axs = plt.subplots(1, figsize=(5, 5), constrained_layout=True)
+        # self.figure, self.axs = plt.subplots(1, figsize=(5, 5), constrained_layout=True)
+        gs_kw = dict(width_ratios=[15, 1])
+        self.figure, (self.axs, self.cax) = plt.subplots(1, 2, figsize=(5, 5),  constrained_layout=True, gridspec_kw=gs_kw)
         self.canvas = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.canvas, self)
         self.cb = None
@@ -68,11 +71,11 @@ class VisualMTZ(QWidget):
         self.btn5.clicked.connect(lambda: self.visual_phi(False))
         self.btn5.setFixedHeight(35)
 
-        self.menu_layout.addWidget(self.btn1, 0, 0, 1, 2, QtCore.Qt.AlignHCenter)
-        self.menu_layout.addWidget(self.btn2, 0, 1, 1, 2, QtCore.Qt.AlignHCenter)
-        self.menu_layout.addWidget(self.btn3, 0, 2, 1, 2, QtCore.Qt.AlignHCenter)
-        self.menu_layout.addWidget(self.btn4, 0, 3, 1, 2, QtCore.Qt.AlignHCenter)
-        self.menu_layout.addWidget(self.btn5, 0, 4, 1, 2, QtCore.Qt.AlignHCenter)
+        self.menu_layout.addWidget(self.btn1, 0, 0*3, 1, 2, QtCore.Qt.AlignHCenter)
+        self.menu_layout.addWidget(self.btn2, 0, 1*3, 1, 2, QtCore.Qt.AlignHCenter)
+        self.menu_layout.addWidget(self.btn3, 0, 2*3, 1, 2, QtCore.Qt.AlignHCenter)
+        self.menu_layout.addWidget(self.btn4, 0, 3*3, 1, 2, QtCore.Qt.AlignHCenter)
+        self.menu_layout.addWidget(self.btn5, 0, 4*3, 1, 2, QtCore.Qt.AlignHCenter)
 
     # Method to configure graph_layout vars and their alignments
     def create_graph_layout(self):
@@ -111,18 +114,22 @@ class VisualMTZ(QWidget):
         self.axs.set_yticks(file_data.position_z)
         self.axs.set_xticklabels(file_data.list_x)
         self.axs.set_yticklabels(file_data.list_y)
+        self.axs.set_xlabel("Расстояние по горизонтали, км")
+        self.axs.set_ylabel("Расстояние по вертикали, км")
         self.axs.set_xlim([0, file_data.position_y[-1]])
         self.axs.set_ylim([file_data.position_z[-1], 0])
 
         # Creating graph
         p2 = self.axs.imshow(file_data.rho, cmap='jet', aspect='auto', interpolation='bilinear', origin="upper")
-        self.cb = self.figure.colorbar(p2, ax=self.axs)
+        self.figure.colorbar(p2, cax=self.cax)
+        self.cax.set_ylabel("Сопротивление", rotation=270)
         self.figure.canvas.draw()
 
     # Rho seem visual
     def visual_rho(self, is_graph):
         self.canvas_update()
         if is_graph:
+            self.cax.clear()
             self.axs.plot([i+1 for i in range(len(self.data_analysed.row_solutions))], self.data_analysed.row_solutions)
             self.axs.set_xticks([i+1 for i in range(len(self.data_analysed.row_solutions))])
             self.axs.set_xticklabels([i+1 for i in range(len(self.data_analysed.row_solutions))])
@@ -137,13 +144,15 @@ class VisualMTZ(QWidget):
             self.axs.set_xlim([1, len(self.data_analysed.row_solutions)])
             temp_mas = np.array(self.data_analysed.row_solutions).transpose()
             p2 = self.axs.imshow(temp_mas, cmap='jet', aspect='auto', interpolation='bilinear', origin="upper")
-            self.cb = self.figure.colorbar(p2, ax=self.axs)
+            self.figure.colorbar(p2, cax=self.cax)
             self.figure.canvas.draw()
 
     # Phi visual
     def visual_phi(self, is_graph=True):
         self.canvas_update()
+
         if is_graph:
+            self.cax.clear()
             self.axs.plot([i+1 for i in range(len(self.data_analysed.phi_solutions))], self.data_analysed.phi_solutions)
             self.axs.set_xticks([i+1 for i in range(len(self.data_analysed.phi_solutions))])
             self.axs.set_xticklabels([i+1 for i in range(len(self.data_analysed.phi_solutions))])
@@ -158,7 +167,7 @@ class VisualMTZ(QWidget):
             self.axs.set_xlim([1, len(self.data_analysed.phi_solutions)])
             temp_mas = np.array(self.data_analysed.phi_solutions).transpose()
             p2 = self.axs.imshow(temp_mas, cmap='jet', aspect='auto', interpolation='bilinear', origin="upper")
-            self.cb = self.figure.colorbar(p2, ax=self.axs)
+            self.figure.colorbar(p2, cax=self.cax)
             self.figure.canvas.draw()
 
     def error_window(self):

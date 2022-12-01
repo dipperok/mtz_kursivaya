@@ -38,6 +38,17 @@ class RhoSeem:
         for i in range(len(self.h_z)):
             self.rho[i] = list(map(int, self.file.readline().split()))  # h_z layers down counter
 
+        self.list_x, self.list_y = [], []
+
+        for i in range(len(self.h_y)):
+            self.list_x.append(np.sum(self.h_y[:i])/1000)
+
+        for i in range(len(self.h_z)):
+            self.list_y.append(np.sum(self.h_z[:i])/1000)
+
+        self.position_y = np.arange(len(self.list_x))
+        self.position_z = np.arange(len(self.list_y))
+
         self.n = self.mas_n[0]  # Count of layers, that a going down in table
         self.m = 5  # count of periods
         self.t1 = 0.01  # first period
