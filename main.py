@@ -10,7 +10,6 @@ class AppController:
     def __init__(self):
         self.first_window = None
         self.second_window = None
-        pass
 
     def intro_window(self):
         self.first_window = ChooseFile()

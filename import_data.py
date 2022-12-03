@@ -55,6 +55,11 @@ class ChooseFile(QtWidgets.QWidget):
         file_path_temp = self.choose_file()
         if file_path_temp is None:
             return
+        possible_error = self.file_validation(file_path_temp)
+        if possible_error != "No errors":
+            self.error_dialog = QtWidgets.QErrorMessage()
+            self.error_dialog.showMessage(possible_error)
+            return
         self.file_path = file_path_temp
         self.switch()
 
@@ -99,6 +104,55 @@ class ChooseFile(QtWidgets.QWidget):
     @staticmethod
     def documentation_button():
         webbrowser.open('https://dipperok.github.io/mtz_kursivaya_documentation/')
+
+    @staticmethod
+    def file_validation(file_path):
+        error_msg = "No errors"
+        file = open(file_path, 'r')
+        mas_n = [0, 0]
+
+        t_e = "More then 2 integers in 1 row | values are not integers"
+        try:
+            mas_n = list(map(int, file.readline().strip().split()))
+            if len(mas_n) != 2:
+                raise Exception(t_e)
+        except:
+            error_msg = t_e
+            return error_msg
+
+        t_e = "2 or 3 row, number marked in first row is not the same with count of values | values are not integers"
+        try:
+            h_z = list(map(int, file.readline().strip().split()))
+            h_y = list(map(int, file.readline().strip().split()))
+            if len(h_z) != mas_n[0] or len(h_y) != mas_n[1]:
+                raise Exception(t_e)
+        except:
+            error_msg = t_e
+            return error_msg
+
+        rho = [[] for i in range(len(h_z))]
+
+        t_e = ">3 row, count of values in row not the same as marked in 1 row | values are not integers"
+        try:
+            i = 0
+            while True:
+                temp_line = file.readline().strip().split()
+                if temp_line:
+                    rho[i] = list(map(int, temp_line))  # h_z layers down counter
+                    if len(rho[i]) != mas_n[1]:
+                        raise Exception(t_e)
+                    i += 1
+                else:
+                    break
+        except:
+            error_msg = t_e
+            return error_msg
+
+        t_e = "number of data rows not the same as marked in 1 row"
+        if len(rho) != mas_n[0]:
+            error_msg = t_e
+
+        return error_msg
 
 
 if __name__ == '__main__':

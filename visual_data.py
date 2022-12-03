@@ -6,7 +6,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QMessageBox
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from mtz import ShowData, RhoSeem
+from mtz import RhoSeem
 
 matplotlib.use('Qt5Agg')
 
@@ -107,44 +107,57 @@ class VisualMTZ(QWidget):
         if self.cb:
             self.figure.delaxes(self.figure.axes[1])
 
-        file_data = ShowData(self.file_path)  # Object with calculated vars for mtz file
-
         # Configuration graph view
-        self.axs.set_xticks(file_data.position_y)
-        self.axs.set_yticks(file_data.position_z)
-        self.axs.set_xticklabels(file_data.list_x)
-        self.axs.set_yticklabels(file_data.list_y)
+        self.axs.set_yscale("linear")
+        self.axs.set_xticks(self.data_analysed.position_y)
+        self.axs.set_yticks(self.data_analysed.position_z)
+        self.axs.set_xticklabels(self.data_analysed.list_x)
+        self.axs.set_yticklabels(self.data_analysed.list_y)
         self.axs.set_xlabel("Расстояние по горизонтали, км")
         self.axs.set_ylabel("Расстояние по вертикали, км")
-        self.axs.set_xlim([0, file_data.position_y[-1]])
-        self.axs.set_ylim([file_data.position_z[-1], 0])
+        self.axs.set_xlim([0, self.data_analysed.position_y[-1]])
+        self.axs.set_ylim([self.data_analysed.position_z[-1], 0])
 
         # Creating graph
-        p2 = self.axs.imshow(file_data.rho, cmap='jet', aspect='auto', interpolation='bilinear', origin="upper")
-        self.figure.colorbar(p2, cax=self.cax)
-        self.cax.set_ylabel("Сопротивление", rotation=270)
+        p = self.axs.imshow(self.data_analysed.rho, cmap='jet', aspect='auto', interpolation='bilinear', origin="upper")
+        self.figure.colorbar(p, cax=self.cax)
+        self.cax.set_ylabel(r"Сопротивление, $\rho$ [$Ом \times м$]", rotation=90)
         self.figure.canvas.draw()
 
     # Rho seem visual
     def visual_rho(self, is_graph):
         self.canvas_update()
+
         if is_graph:
             self.cax.clear()
             self.axs.plot([i+1 for i in range(len(self.data_analysed.row_solutions))], self.data_analysed.row_solutions)
+
+            self.axs.set_yscale('log')
             self.axs.set_xticks([i+1 for i in range(len(self.data_analysed.row_solutions))])
             self.axs.set_xticklabels([i+1 for i in range(len(self.data_analysed.row_solutions))])
             self.axs.set_xlim([1, len(self.data_analysed.row_solutions)])
+            self.axs.set_xlabel("Номер пикета")
+            self.axs.set_ylabel(r"Кажущееся сопротивление, $lg(\rho_{T})$")
+
             legend_marks = [self.data_analysed.t1 * 2**(i+1) for i in range(len(self.data_analysed.row_solutions[0]))]
-            self.axs.legend(legend_marks, title="Периоды")
+            self.axs.legend(legend_marks, title=r"Периоды, $T [с]$")
             self.figure.canvas.draw()
         else:
-            self.axs.plot([i+1 for i in range(len(self.data_analysed.row_solutions))], self.data_analysed.row_solutions)
-            self.axs.set_xticks([i+1 for i in range(len(self.data_analysed.row_solutions))])
-            self.axs.set_xticklabels([i+1 for i in range(len(self.data_analysed.row_solutions))])
-            self.axs.set_xlim([1, len(self.data_analysed.row_solutions)])
-            temp_mas = np.array(self.data_analysed.row_solutions).transpose()
+            self.axs.set_xticks(self.data_analysed.position_y)
+            self.axs.set_xticklabels(self.data_analysed.list_x)
+            self.axs.set_xlim([0, self.data_analysed.position_y[-1]])
+            self.axs.set_xlabel("Расстояние по горизонтали, км")
+
+            periods = [self.data_analysed.t1 * 2**(i+1) for i in range(len(self.data_analysed.row_solutions[0]))]
+
+            self.axs.set_yticks([i for i in range(len(periods))])
+            self.axs.set_yticklabels(periods)
+            self.axs.set_ylabel(r"Периоды, $T [с]$")
+
+            temp_mas = np.log10(np.array(self.data_analysed.row_solutions).transpose())
             p2 = self.axs.imshow(temp_mas, cmap='jet', aspect='auto', interpolation='bilinear', origin="upper")
             self.figure.colorbar(p2, cax=self.cax)
+            self.cax.set_ylabel(r"Кажущееся сопротивление, $lg(\rho_{T})$", rotation=90)
             self.figure.canvas.draw()
 
     # Phi visual
@@ -154,20 +167,32 @@ class VisualMTZ(QWidget):
         if is_graph:
             self.cax.clear()
             self.axs.plot([i+1 for i in range(len(self.data_analysed.phi_solutions))], self.data_analysed.phi_solutions)
+
             self.axs.set_xticks([i+1 for i in range(len(self.data_analysed.phi_solutions))])
             self.axs.set_xticklabels([i+1 for i in range(len(self.data_analysed.phi_solutions))])
             self.axs.set_xlim([1, len(self.data_analysed.phi_solutions)])
+            self.axs.set_xlabel("Номер пикета")
+            self.axs.set_ylabel(r"Фаза импеданса, $\phi$")
+
             legend_marks = [self.data_analysed.t1 * 2**(i+1) for i in range(len(self.data_analysed.phi_solutions[0]))]
-            self.axs.legend(legend_marks, title="Периоды")
+            self.axs.legend(legend_marks, title=r"Периоды, $T [с]$")
             self.figure.canvas.draw()
         else:
-            self.axs.plot([i+1 for i in range(len(self.data_analysed.phi_solutions))], self.data_analysed.phi_solutions)
-            self.axs.set_xticks([i+1 for i in range(len(self.data_analysed.phi_solutions))])
-            self.axs.set_xticklabels([i+1 for i in range(len(self.data_analysed.phi_solutions))])
-            self.axs.set_xlim([1, len(self.data_analysed.phi_solutions)])
+            self.axs.set_xticks(self.data_analysed.position_y)
+            self.axs.set_xticklabels(self.data_analysed.list_x)
+            self.axs.set_xlim([0, self.data_analysed.position_y[-1]])
+            self.axs.set_xlabel("Расстояние по горизонтали, км")
+
+            periods = [self.data_analysed.t1 * 2**(i+1) for i in range(len(self.data_analysed.phi_solutions[0]))]
+
+            self.axs.set_yticks([i for i in range(len(periods))])
+            self.axs.set_yticklabels(periods)
+            self.axs.set_ylabel(r"Периоды, $T [с]$")
+
             temp_mas = np.array(self.data_analysed.phi_solutions).transpose()
             p2 = self.axs.imshow(temp_mas, cmap='jet', aspect='auto', interpolation='bilinear', origin="upper")
             self.figure.colorbar(p2, cax=self.cax)
+            self.cax.set_ylabel(r"Фаза импеданса, $\phi$", rotation=90)
             self.figure.canvas.draw()
 
     def error_window(self):
