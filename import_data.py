@@ -22,7 +22,7 @@ class ChooseFile(QtWidgets.QWidget):
         # Defining menu_layout variables
         self.btn1 = QPushButton("Выбрать файл", self)
         self.btn2 = QPushButton("Документация", self)
-        self.btn3 = QPushButton("Справка", self)
+        # self.btn3 = QPushButton("Справка", self)
 
         self.layouts_configure()  # Method to configure layouts
 
@@ -41,12 +41,12 @@ class ChooseFile(QtWidgets.QWidget):
         self.btn2.clicked.connect(self.documentation_button)
         self.btn2.setFixedHeight(35)
 
-        self.btn3.clicked.connect(self.evt_btn_clicked3)
-        self.btn3.setFixedHeight(35)
+        # self.btn3.clicked.connect(self.evt_btn_clicked3)
+        # self.btn3.setFixedHeight(35)
 
         self.layout.addWidget(self.btn1, 0, 0, 1, 2, QtCore.Qt.AlignHCenter)
         self.layout.addWidget(self.btn2, 1, 0, 1, 2, QtCore.Qt.AlignHCenter)
-        self.layout.addWidget(self.btn3, 2, 0, 1, 2, QtCore.Qt.AlignHCenter)
+        # self.layout.addWidget(self.btn3, 2, 0, 1, 2, QtCore.Qt.AlignHCenter)
 
         self.setLayout(self.layout)
 
@@ -120,7 +120,7 @@ class ChooseFile(QtWidgets.QWidget):
             error_msg = t_e
             return error_msg
 
-        t_e = "2 or 3 row, number marked in first row is not the same with count of values | values are not integers"
+        t_e = "2/3 row, numbers marked in 1 row and count of values in rows aren't the same | values are not integers"
         try:
             h_z = list(map(int, file.readline().strip().split()))
             h_y = list(map(int, file.readline().strip().split()))

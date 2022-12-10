@@ -12,6 +12,9 @@ matplotlib.use('Qt5Agg')
 
 
 class VisualMTZ(QWidget):
+
+    switch_window = QtCore.pyqtSignal()
+
     def __init__(self, file_path):
 
         super(VisualMTZ, self).__init__()
@@ -29,10 +32,11 @@ class VisualMTZ(QWidget):
 
         # Defining menu_layout variables
         self.btn1 = QPushButton("Визуализировать данные", self)
-        self.btn2 = QPushButton("Визуализировать кривые rho кажущегося", self)
-        self.btn3 = QPushButton("Визуализировать карту rho кажущегося", self)
-        self.btn4 = QPushButton("Визуализировать кривые phi", self)
-        self.btn5 = QPushButton("Визуализировать карту phi", self)
+        self.btn2 = QPushButton("Кривые ρ кажущегося", self)
+        self.btn3 = QPushButton("Двумерный разрез ρ кажущегося", self)
+        self.btn4 = QPushButton("Кривые φ", self)
+        self.btn5 = QPushButton("Двумерный разрез φ", self)
+        self.btn6 = QPushButton("Вернуться назад", self)
 
         self.create_menu_layout()  # method to configure menu_layout dependencies
 
@@ -71,11 +75,19 @@ class VisualMTZ(QWidget):
         self.btn5.clicked.connect(lambda: self.visual_phi(False))
         self.btn5.setFixedHeight(35)
 
+        self.btn6.clicked.connect(self.switch)
+        self.btn6.setFixedHeight(35)
+
         self.menu_layout.addWidget(self.btn1, 0, 0*3, 1, 2, QtCore.Qt.AlignHCenter)
         self.menu_layout.addWidget(self.btn2, 0, 1*3, 1, 2, QtCore.Qt.AlignHCenter)
         self.menu_layout.addWidget(self.btn3, 0, 2*3, 1, 2, QtCore.Qt.AlignHCenter)
         self.menu_layout.addWidget(self.btn4, 0, 3*3, 1, 2, QtCore.Qt.AlignHCenter)
         self.menu_layout.addWidget(self.btn5, 0, 4*3, 1, 2, QtCore.Qt.AlignHCenter)
+        self.menu_layout.addWidget(self.btn6, 0, 5*3, 1, 2, QtCore.Qt.AlignHCenter)
+
+    def switch(self):
+        self.close()
+        self.switch_window.emit()
 
     # Method to configure graph_layout vars and their alignments
     def create_graph_layout(self):
@@ -130,7 +142,8 @@ class VisualMTZ(QWidget):
 
         if is_graph:
             self.cax.clear()
-            self.axs.plot([i+1 for i in range(len(self.data_analysed.row_solutions))], self.data_analysed.row_solutions)
+            temp_mas = np.log10(np.array(self.data_analysed.row_solutions))
+            self.axs.plot([i+1 for i in range(len(temp_mas))], temp_mas)
 
             self.axs.set_yscale('log')
             self.axs.set_xticks([i+1 for i in range(len(self.data_analysed.row_solutions))])

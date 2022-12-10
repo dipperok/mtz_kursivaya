@@ -19,7 +19,11 @@ class AppController:
     def graph_window(self, path_to_working_file):
         self.second_window = VisualMTZ(path_to_working_file)
         self.first_window.close()
+        self.second_window.switch_window.connect(self.switch_again)
         self.second_window.show()
+
+    def switch_again(self):
+        self.intro_window()
 
 
 def main():
