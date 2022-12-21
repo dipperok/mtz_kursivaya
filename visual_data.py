@@ -100,16 +100,6 @@ class VisualMTZ(QWidget):
         self.layout.addLayout(self.menu_layout, 1, 0)
         self.setLayout(self.layout)
 
-    # Placeholder for button 3 future function
-    def evt_btn_clicked3(self):
-        get_age, b_ok = QMessageBox.question(self, 'Справка', '12134')
-        try:
-            if b_ok:
-                self.close()
-            else:
-                self.close()
-        except Exception as err:
-            print(err)
 
     def canvas_update(self):
         self.axs.clear()  # clear drawing axes
